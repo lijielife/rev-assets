@@ -13,14 +13,14 @@ You care about the performance of your site, so you've configured the web server
 
 The problem is, now your Python web app can't find the file unless you manually –and painstakingly— update all the URLs in the templates.
 
-.. code:: jinja2
+.. code:: html+jinja
 
 	<script src="{{ url_for('static', filename='home.js') }}></script>
 	<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}</script>
 
 Whit this library, there is no need for that. Just change your templates to:
 
-.. code:: jinja2
+.. code:: html+jinja
 
 	<script src="{{ 'home.js' | asset_url }}></script>
 	<link rel="stylesheet" href="{{ 'home.css' | asset_url }}</script>
