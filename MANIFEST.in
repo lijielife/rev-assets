@@ -1,3 +1,1 @@
-include *.py *.txt *.rst AUTHORS LICENSE
-recursive-include authcode *
-recursive-include tests *
+include *.py *.txt *.rst, *.json AUTHORS LICENSE

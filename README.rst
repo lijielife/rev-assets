@@ -8,22 +8,22 @@ RevAssets
 
 You care about the performance of your site, so you've configured the web server to cache all your assets for a long time. The most used way to bypass that cache when deploying a new version, is to add a hash of the assets to their names.
 ::
-	'home.js' --> 'home.1a23b.js'
-	'home.css' --> 'home.aef45.css'
+	'scripts/home.js' --> 'scripts/home.1a23b.js'
+	'styles/home.css' --> 'styles/home.aef45.css'
 
 The problem is, now your Python web app can't find the file unless you manually –and painstakingly— update all the URLs in the templates.
 
 .. code:: html+jinja
 
-	<script src="{{ url_for('static', filename='home.js') }}></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}</script>
+	<script src="{{ url_for('static', filename='scripts/home.js') }}></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}</script>
 
 Whit this library, there is no need for that. Just change your templates to:
 
 .. code:: html+jinja
 
-	<script src="{{ 'home.js' | asset_url }}></script>
-	<link rel="stylesheet" href="{{ 'home.css' | asset_url }}</script>
+	<script src="{{ 'scripts/home.js' | asset_url }}></script>
+	<link rel="stylesheet" href="{{ 'styles/home.css' | asset_url }}</script>
 
 and use this code:
 
@@ -35,7 +35,7 @@ and use this code:
 
 	app = flask.Flask(__name__)
 
-	rev = RevAssets()
+	rev = RevAssets(reload=app.debug)
 	app.context_processor(lambda: {'asset_url': rev.asset_url})
 
 	@app.route('/')
@@ -66,11 +66,6 @@ To run the tests in your current Python version do::
 To run them in every supported Python version do::
 
     $  tox
-
-It's also neccesary to run the coverage report to make sure all lines of code
-are touch by the tests::
-
-    $  make coverage
 
 Our test suite `runs continuously on Travis CI <https://travis-ci.org/jpscaletti/rev-assets>`_ with every update.
 

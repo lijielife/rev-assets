@@ -14,7 +14,7 @@ def read_from(filepath):
         return f.read()
 
 
-data = read_from(get_path('authcode', '__init__.py')).encode('utf8')
+data = read_from(get_path('rev_assets.py')).encode('utf8')
 version = (re.search(b"__version__\s*=\s*u?'([^']+)'", data).group(1)).decode('utf8').strip()
 desc = (re.search(b'"""(.+)"""', data, re.DOTALL).group(1)).decode('utf8').strip()
 
