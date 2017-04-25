@@ -13,7 +13,7 @@ import json
 import io
 
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 class AssetNotFound(Exception):
@@ -41,7 +41,7 @@ class RevAssets(object):
         self.assets = {}
 
     def _load_manifest(self):
-        with io.open(self.manifest, 'rb') as mf:
+        with io.open(self.manifest, 'rt', encoding='utf-8') as mf:
             return json.loads(mf.read())
 
     def asset_url(self, asset):
