@@ -83,7 +83,7 @@ With this config:
 - And, of course, a global ``manifest.json` is generated for all of them.
 
 
-..code:: JavaScript
+.. code:: JavaScript
 	
 	// gulpfile.js
 	const gulp = require('gulp');
