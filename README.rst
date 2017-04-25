@@ -80,7 +80,7 @@ With this config:
 - The images in ``static/images`` are optimized, hashed and copied into ``static/build/images``.
 - The font files in ``static/fonts`` are hashed and copied into ``static/build/fonts``.
 - Then, every reference to this names in your final CSS files, are updated so the relative ``url(...)`` continue to work.
-- And, of course, a global ``manifest.json` is generated for all of them.
+- And, of course, a global ``manifest.json`` is generated for all of them.
 
 
 .. code:: JavaScript
