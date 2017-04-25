@@ -1,5 +1,4 @@
 flask
 pytest
-pytest-cov
 tox
 flake8

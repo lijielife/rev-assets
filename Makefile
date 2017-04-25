@@ -19,12 +19,6 @@ lint:
 test:
 	py.test -x tests.py
 
-test-all:
-	tox
-
-flake8:
-	flake8 rev_assets.py tests.py
-
 publish: clean
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload

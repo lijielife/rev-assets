@@ -19,7 +19,7 @@ __version__ = '1.0.0'
 class AssetNotFound(Exception):
     def __init__(self, asset):
         super(AssetNotFound, self).__init__(
-            'Asset file “{!r}” not found'.format(asset)
+            "Asset file '{!r}' not found".format(asset)
         )
 
 
@@ -42,15 +42,16 @@ class RevAssets(object):
 
     def _load_manifest(self):
         with io.open(self.manifest, 'rb') as mf:
-            self.assets = json.loads(mf.read())
+            return json.loads(mf.read())
 
     def asset_url(self, asset):
         if not self.assets or self.reload:
-            self._load_manifest()
+            self.assets = self._load_manifest()
+        asset = asset.strip('/')
         path = self.assets.get(asset)
         if not path:
             raise AssetNotFound(asset)
-        return '/'.join([
+        return '{}/{}'.format(
             self.base_url,
             path.lstrip('/'),
-        ])
+        )
