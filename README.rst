@@ -36,7 +36,7 @@ and use this code:
 	app = flask.Flask(__name__)
 
 	rev = RevAssets(reload=app.debug)
-	app.context_processor(lambda: {'asset_url': rev.asset_url})
+	app.jinja_env.filters['asset_url'] = rev.asset_url
 
 	@app.route('/')
 	def index():
