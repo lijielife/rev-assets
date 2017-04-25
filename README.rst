@@ -51,6 +51,23 @@ You can continue to use the old method to link un-versioned assets, like ``favic
 Note that *this is not a Flask extension*, but a Python library. You can use it with any other framework. You can also have many instances of ``RevAssets`` linked to differents manifests.
 
 
+Parameters
+======================
+
+.. code:: python
+
+	rev = RevAssets([base_url], [reload], [manifest], [quiet])
+
+:base_url: ('/static')
+	Prefix for the found assets. Can be a local path or a different domain, like a CDN.
+:reload: (False) 
+	Reload the manifest file eash time an asset is requested
+:manifest: ('manifest.json')
+	Relative or absolute path to a JSON file that maps the source files to the hashed versions. Eg.: ``scripts/home.js`` to ``scripts/home.1a23b.js``.
+:quiet: (True)
+	If ``False``, a missing asset will raise an exception. If ``True``, an empty string will be returned instead.
+
+
 Run the tests
 ======================
 
