@@ -58,13 +58,13 @@ Parameters
 
 	rev = RevAssets([base_url], [reload], [manifest], [quiet])
 
-:base_url: ('/static')
+:base_url: (``/static``)
 	Prefix for the found assets. Can be a local path or a different domain, like a CDN.
-:reload: (False) 
+:reload: (``False``) 
 	Reload the manifest file eash time an asset is requested
-:manifest: ('manifest.json')
+:manifest: (``manifest.json``)
 	Relative or absolute path to a JSON file that maps the source files to the hashed versions. Eg.: ``scripts/home.js`` to ``scripts/home.1a23b.js``.
-:quiet: (True)
+:quiet: (``True``)
 	If ``False``, a missing asset will raise an exception. If ``True``, an empty string will be returned instead.
 
 
