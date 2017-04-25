@@ -82,7 +82,8 @@ With this config:
 - Then, every reference to this names in your final CSS files, are updated so the relative ``url(...)`` continue to work.
 - And, of course, a global ``manifest.json` is generated for all of them.
 
-..code:: javascript
+
+..code:: JavaScript
 	
 	// gulpfile.js
 	const gulp = require('gulp');
