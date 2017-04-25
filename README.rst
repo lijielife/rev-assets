@@ -68,8 +68,8 @@ Parameters
     If ``False``, a missing asset will raise an exception. If ``True``, an empty string will be returned instead.
 
 
-An example config file for Gulp.js
-====================================
+An example config file for `Gulp.js <http://gulpjs.com/>`_
+============================================================
 
 It doesn't matter what task runner do you use, as long as it's configured to generate a ``manifest.json`` file. However, it's not always easy to do it. So this is a working ``gulpfile.js`` you can use it to process your assets or take as a reference.
 
