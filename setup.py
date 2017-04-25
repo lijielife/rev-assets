@@ -15,7 +15,7 @@ def read_from(*args):
         return f.read()
 
 
-data = read_from('rev_assets.py').encode('utf8')
+data = read_from('rev_assets/__init__.py').encode('utf8')
 version = (re.search(b"__version__\s*=\s*u?'([^']+)'", data).group(1)).decode('utf8').strip()
 desc = read_from('README.rst').strip()
 

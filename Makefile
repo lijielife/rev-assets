@@ -14,7 +14,11 @@ clean-pyc:
 	find . -name '__pycache__' -exec rm -rf {} +
 
 lint:
-	flake8 rev_assets.py tests.py --ignore=E501
+	flake8 rev_assets tests.py --ignore=E501
+
+coverage:
+	py.test -x --cov-config .coveragerc --cov rev_assets --cov-report html tests.py
+	open htmlcov/index.html
 
 test:
 	py.test -x tests.py
