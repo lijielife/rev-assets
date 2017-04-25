@@ -19,7 +19,7 @@ __version__ = '1.0.2'
 class AssetNotFound(Exception):
     def __init__(self, asset):
         super(AssetNotFound, self).__init__(
-            "Asset file '{!r}' not found".format(asset)
+            "Asset file {!r} not found".format(asset)
         )
 
 
