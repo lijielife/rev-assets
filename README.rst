@@ -8,39 +8,39 @@ RevAssets
 
 You care about the performance of your site, so you've configured the web server to cache all your assets for a long time. The most used way to bypass that cache when deploying a new version, is to add a hash of the assets to their names.
 ::
-	'scripts/home.js' --> 'scripts/home.1a23b.js'
-	'styles/home.css' --> 'styles/home.aef45.css'
+    'scripts/home.js' --> 'scripts/home.1a23b.js'
+    'styles/home.css' --> 'styles/home.aef45.css'
 
 The problem is, now your Python web app can't find the file unless you manually –and painstakingly— update all the URLs in the templates.
 
 .. code:: html+jinja
 
-	<script src="{{ url_for('static', filename='scripts/home.js') }}></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}</script>
+    <script src="{{ url_for('static', filename='scripts/home.js') }}></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}</script>
 
 Whit this library, there is no need for that. Just change your templates to:
 
 .. code:: html+jinja
 
-	<script src="{{ 'scripts/home.js' | asset_url }}></script>
-	<link rel="stylesheet" href="{{ 'styles/home.css' | asset_url }}</script>
+    <script src="{{ 'scripts/home.js' | asset_url }}></script>
+    <link rel="stylesheet" href="{{ 'styles/home.css' | asset_url }}</script>
 
 and use this code:
 
 .. code:: python
 
-	# app.py
-	from flask import Flask, render_template
-	from rev_assets import RevAssets
+    # app.py
+    from flask import Flask, render_template
+    from rev_assets import RevAssets
 
-	app = flask.Flask(__name__)
+    app = flask.Flask(__name__)
 
-	rev = RevAssets(reload=app.debug)
-	app.jinja_env.filters['asset_url'] = rev.asset_url
+    rev = RevAssets(reload=app.debug)
+    app.jinja_env.filters['asset_url'] = rev.asset_url
 
-	@app.route('/')
-	def index():
-	    return render_template('index.html')
+    @app.route('/')
+    def index():
+        return render_template('index.html')
 
 and it will work for every version of the assets that you build.
 
@@ -56,16 +56,16 @@ Parameters
 
 .. code:: python
 
-	rev = RevAssets([base_url], [reload], [manifest], [quiet])
+    rev = RevAssets([base_url], [reload], [manifest], [quiet])
 
 :base_url: (``/static``)
-	Prefix for the found assets. Can be a local path or a different domain, like a CDN.
+    Prefix for the found assets. Can be a local path or a different domain, like a CDN.
 :reload: (``False``) 
-	Reload the manifest file eash time an asset is requested
+    Reload the manifest file eash time an asset is requested
 :manifest: (``manifest.json``)
-	Relative or absolute path to a JSON file that maps the source files to the hashed versions. Eg.: ``scripts/home.js`` to ``scripts/home.1a23b.js``.
+    Relative or absolute path to a JSON file that maps the source files to the hashed versions. Eg.: ``scripts/home.js`` to ``scripts/home.1a23b.js``.
 :quiet: (``True``)
-	If ``False``, a missing asset will raise an exception. If ``True``, an empty string will be returned instead.
+    If ``False``, a missing asset will raise an exception. If ``True``, an empty string will be returned instead.
 
 
 An example config file for Gulp.js
@@ -84,189 +84,189 @@ With this config:
 
 
 .. code:: JavaScript
-	
-	// gulpfile.js
-	const gulp = require('gulp');
+    
+    // gulpfile.js
+    const gulp = require('gulp');
 
-	const autoprefixer = require('gulp-autoprefixer');
-	const babel = require('gulp-babel');
-	const del = require('del');
-	const cssmin = require('gulp-cssmin');
-	const imagemin = require('gulp-imagemin');
-	const rev = require('gulp-rev');
-	const revreplace = require("gulp-rev-replace");
-	const runseq = require('run-sequence');
-	const sass = require('gulp-sass');
-	const sourcemaps = require('gulp-sourcemaps');
-	const uglify = require('gulp-uglify');
+    const autoprefixer = require('gulp-autoprefixer');
+    const babel = require('gulp-babel');
+    const del = require('del');
+    const cssmin = require('gulp-cssmin');
+    const imagemin = require('gulp-imagemin');
+    const rev = require('gulp-rev');
+    const revreplace = require("gulp-rev-replace");
+    const runseq = require('run-sequence');
+    const sass = require('gulp-sass');
+    const sourcemaps = require('gulp-sourcemaps');
+    const uglify = require('gulp-uglify');
 
-	const sourcePath = 'webapp/static';
-	const buildPath = 'webapp/static/build';
-	const manifestFile = buildPath + '/rev-manifest.json';
+    const sourcePath = 'webapp/static';
+    const buildPath = 'webapp/static/build';
+    const manifestFile = buildPath + '/rev-manifest.json';
 
 
-	gulp.task('sass', () => {
-		del.sync([buildPath + '/styles/**']);
-		return gulp
-			.src(sourcePath + '/styles/**/*.scss', {base: sourcePath})
-			.pipe(sourcemaps.init())
-			.pipe(
-				sass({
-					outputStyle: 'compressed'
-				})
-				.on('error', sass.logError)
-			)
-			.pipe(
-				autoprefixer({
-					browsers: ['last 2 versions', 'ie >= 9', 'and_chr >= 2.3'],
-					cascade: false,
-				})
-			)
-			.pipe(cssmin())
+    gulp.task('sass', () => {
+      del.sync([buildPath + '/styles/**']);
+      return gulp
+        .src(sourcePath + '/styles/**/*.scss', {base: sourcePath})
+        .pipe(sourcemaps.init())
+        .pipe(
+          sass({
+            outputStyle: 'compressed'
+          })
+          .on('error', sass.logError)
+        )
+        .pipe(
+          autoprefixer({
+            browsers: ['last 2 versions', 'ie >= 9', 'and_chr >= 2.3'],
+            cascade: false,
+          })
+        )
+        .pipe(cssmin())
 
-			.pipe(rev())
-			.pipe(sourcemaps.write('.'))
-			.pipe(gulp.dest(buildPath))
-			.pipe(rev.manifest(
-				manifestFile,
-				{merge: true, base:buildPath}
-			))
-			.pipe(gulp.dest(buildPath))
-			;
-	});
+        .pipe(rev())
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(buildPath))
+        .pipe(rev.manifest(
+          manifestFile,
+          {merge: true, base:buildPath}
+        ))
+        .pipe(gulp.dest(buildPath))
+        ;
+    });
 
-	gulp.task('js', () => {
-		del.sync([buildPath + '/scripts/**']);
-		return gulp
-			.src([
-				sourcePath + '/scripts/**/*.js',
-				'!**/_*.js'
-			], {base: sourcePath})
-			.pipe(sourcemaps.init())
-			.pipe(
-				babel({
-					presets: ['es2015'],
-				})
-			)
-			.pipe(uglify())
+    gulp.task('js', () => {
+      del.sync([buildPath + '/scripts/**']);
+      return gulp
+        .src([
+          sourcePath + '/scripts/**/*.js',
+          '!**/_*.js'
+        ], {base: sourcePath})
+        .pipe(sourcemaps.init())
+        .pipe(
+          babel({
+            presets: ['es2015'],
+          })
+        )
+        .pipe(uglify())
 
-			.pipe(rev())
-			.pipe(sourcemaps.write('.'))
-			.pipe(gulp.dest(buildPath))
-			.pipe(rev.manifest(
-				manifestFile,
-				{merge: true, base:buildPath}
-			))
-			.pipe(gulp.dest(buildPath))
-			;
-	});
+        .pipe(rev())
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(buildPath))
+        .pipe(rev.manifest(
+          manifestFile,
+          {merge: true, base:buildPath}
+        ))
+        .pipe(gulp.dest(buildPath))
+        ;
+    });
 
-	gulp.task('images', () => {
-		del.sync([buildPath + '/images/**']);
-		return gulp
-			.src(sourcePath + '/images/**', {base: sourcePath})
-			.pipe(imagemin([
-				imagemin.gifsicle({interlaced: true}),
-				imagemin.jpegtran({progressive: true}),
-				imagemin.optipng({optimizationLevel: 5}),
-				imagemin.svgo({plugins: [{removeViewBox: true}]})
-			]))
-			.pipe(rev())
-			.pipe(gulp.dest(buildPath))
-			.pipe(rev.manifest(
-				manifestFile,
-				{merge: true, base:buildPath}
-			))
-			.pipe(gulp.dest(buildPath))
-			;
-	});
+    gulp.task('images', () => {
+      del.sync([buildPath + '/images/**']);
+      return gulp
+        .src(sourcePath + '/images/**', {base: sourcePath})
+        .pipe(imagemin([
+          imagemin.gifsicle({interlaced: true}),
+          imagemin.jpegtran({progressive: true}),
+          imagemin.optipng({optimizationLevel: 5}),
+          imagemin.svgo({plugins: [{removeViewBox: true}]})
+        ]))
+        .pipe(rev())
+        .pipe(gulp.dest(buildPath))
+        .pipe(rev.manifest(
+          manifestFile,
+          {merge: true, base:buildPath}
+        ))
+        .pipe(gulp.dest(buildPath))
+        ;
+    });
 
-	gulp.task('fonts', () => {
-		del.sync([buildPath + '/fonts/**']);
-		return gulp
-			.src(sourcePath + '/fonts/**', {base: sourcePath})
-			.pipe(rev())
-			.pipe(gulp.dest(buildPath))
-			.pipe(rev.manifest(
-				manifestFile,
-				{merge: true, base:buildPath}
-			))
-			.pipe(gulp.dest(buildPath))
-			;
-	});
+    gulp.task('fonts', () => {
+      del.sync([buildPath + '/fonts/**']);
+      return gulp
+        .src(sourcePath + '/fonts/**', {base: sourcePath})
+        .pipe(rev())
+        .pipe(gulp.dest(buildPath))
+        .pipe(rev.manifest(
+          manifestFile,
+          {merge: true, base:buildPath}
+        ))
+        .pipe(gulp.dest(buildPath))
+        ;
+    });
 
-	gulp.task('revreplace', () => {
-		return gulp.src(buildPath + '/**/*.css')
-			.pipe(revreplace({
-				manifest: gulp.src(manifestFile)
-			}))
-			.pipe(gulp.dest(buildPath));
-	});
+    gulp.task('revreplace', () => {
+      return gulp.src(buildPath + '/**/*.css')
+        .pipe(revreplace({
+          manifest: gulp.src(manifestFile)
+        }))
+        .pipe(gulp.dest(buildPath));
+    });
 
-	gulp.task('sass:watch', () => {
-		gulp.watch(
-			sourcePath + '/styles/*.scss',
-			() => runseq('sass', 'revreplace')
-		);
-	});
+    gulp.task('sass:watch', () => {
+      gulp.watch(
+        sourcePath + '/styles/*.scss',
+        () => runseq('sass', 'revreplace')
+      );
+    });
 
-	gulp.task('js:watch', () => {
-		gulp.watch(
-			sourcePath + '/scripts/*.js',
-			() => runseq('js', 'revreplace')
-		);
-	});
+    gulp.task('js:watch', () => {
+      gulp.watch(
+        sourcePath + '/scripts/*.js',
+        () => runseq('js', 'revreplace')
+      );
+    });
 
-	gulp.task('images:watch', () => {
-		gulp.watch(
-			[sourcePath + '/images/**'],
-			() => runseq('images', 'revreplace')
-		);
-	});
+    gulp.task('images:watch', () => {
+      gulp.watch(
+        [sourcePath + '/images/**'],
+        () => runseq('images', 'revreplace')
+      );
+    });
 
-	gulp.task('fonts:watch', () => {
-		gulp.watch(
-			[sourcePath + '/fonts/**'],
-			() => runseq('fonts', 'revreplace')
-		);
-	});
+    gulp.task('fonts:watch', () => {
+      gulp.watch(
+        [sourcePath + '/fonts/**'],
+        () => runseq('fonts', 'revreplace')
+      );
+    });
 
-	gulp.task('clear', () => {
-		del.sync([manifestFile]);
-	});
+    gulp.task('clear', () => {
+      del.sync([manifestFile]);
+    });
 
-	gulp.task('build', () => runseq(
-		'clear',
-		['sass', 'js'],
-		['images', 'fonts'],
-		'revreplace'
-	));
+    gulp.task('build', () => runseq(
+      'clear',
+      ['sass', 'js'],
+      ['images', 'fonts'],
+      'revreplace'
+    ));
 
-	gulp.task('watch', ['sass:watch', 'js:watch', 'images:watch', 'fonts:watch']);
+    gulp.task('watch', ['sass:watch', 'js:watch', 'images:watch', 'fonts:watch']);
 
-	gulp.task('default', ['build']);
+    gulp.task('default', ['build']);
 
 and the ``package.json`` file with the dependencies.
 
-..code:: json
+.. code:: json
 
-	{
-	  "devDependencies": {
-	    "babel-preset-es2015": "^6.24.1",
-	    "del": "^2.2.2",
-	    "gulp": "^3.9.1",
-	    "gulp-autoprefixer": "^3.1.1",
-	    "gulp-babel": "^6.1.2",
-	    "gulp-cssmin": "^0.1.7",
-	    "gulp-imagemin": "^3.2.0",
-	    "gulp-rev": "^7.1.2",
-	    "gulp-rev-replace": "^0.4.3",
-	    "gulp-sass": "^3.1.0",
-	    "gulp-sourcemaps": "^2.6.0",
-	    "gulp-uglify": "^2.1.2",
-	    "run-sequence": "^1.2.2"
-	  }
-	}
+    {
+      "devDependencies": {
+        "babel-preset-es2015": "^6.24.1",
+        "del": "^2.2.2",
+        "gulp": "^3.9.1",
+        "gulp-autoprefixer": "^3.1.1",
+        "gulp-babel": "^6.1.2",
+        "gulp-cssmin": "^0.1.7",
+        "gulp-imagemin": "^3.2.0",
+        "gulp-rev": "^7.1.2",
+        "gulp-rev-replace": "^0.4.3",
+        "gulp-sass": "^3.1.0",
+        "gulp-sourcemaps": "^2.6.0",
+        "gulp-uglify": "^2.1.2",
+        "run-sequence": "^1.2.2"
+      }
+    }
 
 
 Run the tests
