@@ -9,14 +9,15 @@ def get_path(*args):
     return os.path.join(os.path.dirname(__file__), *args)
 
 
-def read_from(filepath):
+def read_from(*args):
+    filepath = get_path(*args)
     with io.open(filepath, 'rt', encoding='utf8') as f:
         return f.read()
 
 
-data = read_from(get_path('rev_assets.py')).encode('utf8')
+data = read_from('rev_assets.py').encode('utf8')
 version = (re.search(b"__version__\s*=\s*u?'([^']+)'", data).group(1)).decode('utf8').strip()
-desc = (re.search(b'"""(.+)"""', data, re.DOTALL).group(1)).decode('utf8').strip()
+desc = read_from('README.rst').strip()
 
 
 setup(
