@@ -13,14 +13,11 @@ import json
 import io
 
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 
 class AssetNotFound(Exception):
-    def __init__(self, asset):
-        super(AssetNotFound, self).__init__(
-            "Asset file {!r} not found".format(asset)
-        )
+    pass
 
 
 class RevAssets(object):
@@ -30,15 +27,17 @@ class RevAssets(object):
     :param base_url: From where the hashed assets are served.
     :param reload: Reload the manifest each time an asset is requested.
     :param manifest: Path and filename of the manifest file.
+    :param quiet: If False, a missing asset will raise an exception
 
     """
 
     def __init__(self, base_url='/static', reload=False,
-                 manifest='manifest.json'):
+                 manifest='manifest.json', quiet=True):
         self.base_url = base_url.rstrip('/')
         self.reload = reload
         self.manifest = manifest
         self.assets = {}
+        self.quiet = quiet
 
     def _load_manifest(self):
         with io.open(self.manifest, 'rt', encoding='utf-8') as mf:
@@ -50,7 +49,11 @@ class RevAssets(object):
         asset = asset.strip('/')
         path = self.assets.get(asset)
         if not path:
-            raise AssetNotFound(asset)
+            if self.quiet:
+                return ''
+            msg = 'Asset file {!r} not found'.format(asset)
+            raise AssetNotFound(msg)
+
         return '{}/{}'.format(
             self.base_url,
             path.lstrip('/'),

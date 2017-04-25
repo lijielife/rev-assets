@@ -89,8 +89,14 @@ def test_no_manifest():
         rev.asset_url('styles/home.css')
 
 
-def test_no_asset():
+def test_no_asset_quiet():
     rev = RevAssets(manifest='tests-manifest.json')
+    asset = 'no can do'
+    rev.asset_url(asset) == ''
+
+
+def test_no_asset_loud():
+    rev = RevAssets(manifest='tests-manifest.json', quiet=False)
     asset = 'no can do'
     with pytest.raises(AssetNotFound):
         rev.asset_url(asset)
