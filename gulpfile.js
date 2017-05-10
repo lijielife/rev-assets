@@ -30,12 +30,14 @@ const noop = through.obj();
 
 
 gulp.task('sass', () => {
-	del.sync([BUILD_PATH + '/styles/**']);
 	return gulp
-		.src(SOURCE_PATH + '/styles/**/*.scss', {base: SOURCE_PATH})
-		.pipe(sourcemaps.init())
+		.src([
+			SOURCE_PATH + '/styles/**/*.scss',
+			'!**/_*.scss'
+		], {base: SOURCE_PATH})
+		.pipe(config.env == 'prod' ? noop : sourcemaps.init())
 		.pipe(
-			sass(config.env == 'prod' ? {outputStyle: 'compressed'} : {})
+			sass({outputStyle: 'compressed'})  //or 'expanded'
 			.on('error', sass.logError)
 		)
 		.pipe(
@@ -46,7 +48,7 @@ gulp.task('sass', () => {
 		)
 		.pipe(config.env == 'prod' ? cssmin() : noop)
 		.pipe(rev())
-		.pipe(sourcemaps.write('.'))
+		.pipe(config.env == 'prod' ? noop : sourcemaps.write('.'))
 		.pipe(gulp.dest(BUILD_PATH))
 		.pipe(rev.manifest(
 			MANIFEST_FILE,
@@ -57,21 +59,20 @@ gulp.task('sass', () => {
 });
 
 gulp.task('js', () => {
-	del.sync([BUILD_PATH + '/scripts/**']);
 	return gulp
 		.src([
 			SOURCE_PATH + '/scripts/**/*.js',
-			'!**/_*.js'
+			'!/**/_*.js'
 		], {base: SOURCE_PATH})
-		.pipe(sourcemaps.init())
+		.pipe(config.env == 'prod' ? noop : sourcemaps.init())
 		.pipe(
 			babel({
 				presets: ['es2015'],
 			})
 		)
-		.pipe(config.env == 'prod' ? uglify() : noop)
+		.pipe(uglify())
 		.pipe(rev())
-		.pipe(sourcemaps.write('.'))
+		.pipe(config.env == 'prod' ? noop : sourcemaps.write('.'))
 		.pipe(gulp.dest(BUILD_PATH))
 		.pipe(rev.manifest(
 			MANIFEST_FILE,
@@ -82,7 +83,6 @@ gulp.task('js', () => {
 });
 
 gulp.task('images', () => {
-	del.sync([BUILD_PATH + '/images/**']);
 	return gulp
 		.src(SOURCE_PATH + '/images/**', {base: SOURCE_PATH})
 		.pipe(imagemin([
@@ -102,7 +102,6 @@ gulp.task('images', () => {
 });
 
 gulp.task('fonts', () => {
-	del.sync([BUILD_PATH + '/fonts/**']);
 	return gulp
 		.src(SOURCE_PATH + '/fonts/**', {base: SOURCE_PATH})
 		.pipe(rev())
@@ -151,17 +150,14 @@ gulp.task('fonts:watch', () => {
 	);
 });
 
-gulp.task('clear', () => {
-	del.sync([MANIFEST_FILE]);
+gulp.task('clean', () => {
+	return del([BUILD_PATH]);
 });
 
 // Development build
-gulp.task('dev-build', () => runseq(
-	'clear',
-	['sass', 'js'],
-	['images', 'fonts'],
-	'revreplace'
-));
+gulp.task('dev-build', () => {
+	runseq('clean', ['sass', 'js', 'images', 'fonts'], 'revreplace')
+});
 
 // Production build
 gulp.task('prod-build', () => {
