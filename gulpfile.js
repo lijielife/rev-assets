@@ -33,11 +33,11 @@ gulp.task('sass', () => {
 	return gulp
 		.src([
 			SOURCE_PATH + '/styles/**/*.scss',
-			'!**/_*.scss'
+			'!/styles/**/_*.scss'
 		], {base: SOURCE_PATH})
 		.pipe(config.env == 'prod' ? noop : sourcemaps.init())
 		.pipe(
-			sass({outputStyle: 'compressed'})  //or 'expanded'
+			sass({outputStyle: config.env == 'prod' ? 'compressed' : 'expanded'})
 			.on('error', sass.logError)
 		)
 		.pipe(
@@ -62,7 +62,7 @@ gulp.task('js', () => {
 	return gulp
 		.src([
 			SOURCE_PATH + '/scripts/**/*.js',
-			'!/**/_*.js'
+			'!/scripts/**/_*.js'
 		], {base: SOURCE_PATH})
 		.pipe(config.env == 'prod' ? noop : sourcemaps.init())
 		.pipe(
@@ -85,12 +85,14 @@ gulp.task('js', () => {
 gulp.task('images', () => {
 	return gulp
 		.src(SOURCE_PATH + '/images/**', {base: SOURCE_PATH})
-		.pipe(imagemin([
-			imagemin.gifsicle({interlaced: true}),
-			imagemin.jpegtran({progressive: true}),
-			imagemin.optipng({optimizationLevel: 5}),
-			imagemin.svgo({plugins: [{removeViewBox: true}]})
-		]))
+		.pipe(imagemin(
+			config.env == 'prod' ? [
+				imagemin.gifsicle({interlaced: true}),
+				imagemin.jpegtran({progressive: true}),
+				imagemin.optipng({optimizationLevel: 5}),
+				imagemin.svgo({plugins: [{removeViewBox: true}]})
+			] : []
+		))
 		.pipe(rev())
 		.pipe(gulp.dest(BUILD_PATH))
 		.pipe(rev.manifest(
@@ -122,34 +124,6 @@ gulp.task('revreplace', () => {
 		.pipe(gulp.dest(BUILD_PATH));
 });
 
-gulp.task('sass:watch', () => {
-	gulp.watch(
-		SOURCE_PATH + '/styles/*.scss',
-		() => runseq('sass', 'revreplace')
-	);
-});
-
-gulp.task('js:watch', () => {
-	gulp.watch(
-		SOURCE_PATH + '/scripts/*.js',
-		() => runseq('js', 'revreplace')
-	);
-});
-
-gulp.task('images:watch', () => {
-	gulp.watch(
-		[SOURCE_PATH + '/images/**'],
-		() => runseq('images', 'revreplace')
-	);
-});
-
-gulp.task('fonts:watch', () => {
-	gulp.watch(
-		[SOURCE_PATH + '/fonts/**'],
-		() => runseq('fonts', 'revreplace')
-	);
-});
-
 gulp.task('clean', () => {
 	return del([BUILD_PATH]);
 });
@@ -164,8 +138,6 @@ gulp.task('prod-build', () => {
 	process.env.NODE_ENV = config.env = 'prod';
 	runseq('dev-build');
 });
-
-gulp.task('watch', ['sass:watch', 'js:watch', 'images:watch', 'fonts:watch']);
 
 gulp.task('default', ['dev-build']);
 gulp.task('build', ['prod-build']);

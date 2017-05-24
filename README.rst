@@ -35,12 +35,16 @@ and use this code:
 
     app = flask.Flask(__name__)
 
-    rev = RevAssets(reload=app.debug)
+    rev = RevAssets(reload=app.config.DEBUG)
     app.jinja_env.filters['asset_url'] = rev.asset_url
 
     @app.route('/')
     def index():
         return render_template('index.html')
+
+    if __name__ == '__main__':
+        # Required to bypass Jinja's internal cache
+        app.run(extra_files=[rev.manifest])
 
 and it will work for every version of the assets that you build.
 
